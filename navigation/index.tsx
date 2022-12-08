@@ -3,21 +3,23 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { FontAwesome } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { ColorPropType, ColorSchemeName, Pressable, View } from 'react-native';
+import { FontAwesome, Ionicons } from '@expo/vector-icons'
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
+import EntryScreen from '../screens/EntryScreen';
 import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import Layout from '../constants/Layout';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -38,7 +40,43 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function RootNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+      <Stack.Screen name="Root" component={MainTabNavigator} options={{ 
+        headerStyle: {
+          backgroundColor: Colors.header.background
+        },
+        headerTintColor: Colors.header.text,
+        title: 'Manga Journal',
+        headerRight: () => (
+          <View style={{
+            flexDirection:'row',
+            width: 60,
+            justifyContent: 'space-between',
+            marginRight: 10,
+          }}>
+            <FontAwesome
+              name='search'
+              size={24}
+              color={Colors.header.text}
+            />
+            <Ionicons
+              name='filter'
+              size={24}
+              color={Colors.header.text}
+            />
+          </View>
+        )
+      }}/>
+      <Stack.Screen
+        name="Entry"
+        component={EntryScreen} 
+        options={{ 
+          title: 'Update Info',
+          headerStyle: {
+            backgroundColor: Colors.header.background
+          },
+          headerTintColor: Colors.header.text, 
+        }} 
+      />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
@@ -51,48 +89,45 @@ function RootNavigator() {
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
  * https://reactnavigation.org/docs/bottom-tab-navigator
  */
-const BottomTab = createBottomTabNavigator<RootTabParamList>();
+const MainTab = createMaterialTopTabNavigator<RootTabParamList>();
 
-function BottomTabNavigator() {
+function MainTabNavigator() {
   const colorScheme = useColorScheme();
 
   return (
-    <BottomTab.Navigator
+    <MainTab.Navigator
       initialRouteName="TabOne"
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
+        tabBarActiveTintColor: Colors.header.text_light,
+        tabBarStyle: {
+          backgroundColor: Colors.header.background_darkgray,
+        },
+        tabBarIndicatorStyle: {
+          backgroundColor: Colors.header.text_light,
+          height: 4
+        },
+        tabBarLabelStyle: {
+          fontWeight: 'bold'
+        },
+        tabBarShowIcon: true,
       }}>
-      <BottomTab.Screen
+      <MainTab.Screen
         name="TabOne"
         component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
-        })}
+        options={{
+          tabBarIcon: ({ color }) => <FontAwesome name="book" size={25} color={color} />,
+          tabBarLabel: () => null,
+        }}
       />
-      <BottomTab.Screen
+      <MainTab.Screen
         name="TabTwo"
         component={TabTwoScreen}
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <FontAwesome name="plus-circle" size={25} color={color} />,
+          tabBarLabel: () => null,
         }}
       />
-    </BottomTab.Navigator>
+    </MainTab.Navigator>
   );
 }
 

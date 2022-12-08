@@ -6,8 +6,12 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Timestamp } from 'react-native-reanimated/lib/types/lib/reanimated2/commonTypes';
 
 declare global {
+
+  var mangaList: [];
+
   namespace ReactNavigation {
     interface RootParamList extends RootStackParamList {}
   }
@@ -33,3 +37,11 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> = Composit
   BottomTabScreenProps<RootTabParamList, Screen>,
   NativeStackScreenProps<RootStackParamList>
 >;
+
+export type MangaItem = {
+  id: String;
+  arrId: Number;
+  rating: Number;
+  chapterNum: Number;
+  dateCreated: Timestamp;
+}
